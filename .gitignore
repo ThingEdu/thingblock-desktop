@@ -1,0 +1,14 @@
+# Rust / Tauri
+/src-tauri/target/
+/src-tauri/binaries/
+/src-tauri/resources/
+
+# Node
+/node_modules/
+npm-debug.log*
+
+# Build output
+/dist/
+
+# OS
+.DS_Store

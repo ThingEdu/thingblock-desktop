@@ -1,0 +1,50 @@
+{
+  "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
+  "productName": "ThingBlock",
+  "version": "0.1.0",
+  "identifier": "com.thingblock.desktop",
+  "build": {
+    "frontendDist": "../../scratch-editor/packages/scratch-gui/build",
+    "devUrl": "http://localhost:8601",
+    "beforeDevCommand": "npm run stage:sidecar && npm run dev:editor",
+    "beforeBuildCommand": "npm run stage:sidecar && npm run build:editor"
+  },
+  "app": {
+    "windows": [
+      {
+        "title": "ThingBlock",
+        "width": 1280,
+        "height": 800,
+        "resizable": true,
+        "fullscreen": false
+      }
+    ],
+    "security": {
+      "csp": null
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": [
+      "deb",
+      "rpm"
+    ],
+    "externalBin": [
+      "binaries/thingblock-link"
+    ],
+    "resources": {
+      "resources/thingblock-resource": "thingblock-resource",
+      "resources/arduino-cli": "arduino-cli"
+    },
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ],
+    "android": {
+      "debugApplicationIdSuffix": ".debug"
+    }
+  }
+}
