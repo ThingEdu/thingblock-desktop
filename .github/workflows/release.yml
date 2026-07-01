@@ -10,6 +10,10 @@ on:
 
 jobs:
   build:
+    # tauri-action creates the GitHub Release and uploads assets, which needs a
+    # write-scoped token (repos default the workflow token to read-only).
+    permissions:
+      contents: write
     strategy:
       fail-fast: false
       matrix:
