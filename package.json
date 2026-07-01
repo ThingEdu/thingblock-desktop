@@ -3,14 +3,16 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "build:editor": "NODE_ENV=production npm --prefix ../thingblock-editor/packages/scratch-gui run build:dev",
+    "build:editor": "cross-env NODE_ENV=production npm --prefix ../thingblock-editor/packages/scratch-gui run build:dev",
     "dev:editor": "npm --prefix ../thingblock-editor/packages/scratch-gui run start",
     "dist": "tauri build",
     "dist:debug": "tauri build --debug",
     "stage:sidecar": "bash scripts/stage-sidecar.sh",
+    "stage:sidecar:win": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/stage-sidecar.ps1",
     "tauri": "tauri"
   },
   "devDependencies": {
-    "@tauri-apps/cli": "^2"
+    "@tauri-apps/cli": "^2",
+    "cross-env": "^7"
   }
 }

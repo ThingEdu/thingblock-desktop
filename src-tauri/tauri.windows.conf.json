@@ -1,0 +1,12 @@
+{
+  "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
+  "build": {
+    "beforeDevCommand": "npm run stage:sidecar:win && npm run dev:editor",
+    "beforeBuildCommand": "npm run stage:sidecar:win && npm run build:editor"
+  },
+  "bundle": {
+    "targets": [
+      "nsis"
+    ]
+  }
+}

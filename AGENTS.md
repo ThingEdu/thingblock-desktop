@@ -36,8 +36,13 @@ The three are independent git repos checked out as siblings on disk:
 - The **link** is consumed as a **prebuilt sidecar binary**: `cargo build --release` in the link
   repo, then its binary is staged into `src-tauri/binaries/` (bundled via Tauri `externalBin`).
   Its runtime data — the `thingblock-resource/` pack and the host-platform `arduino-cli` — is staged
-  into `src-tauri/resources/` and bundled via Tauri `resources`. `scripts/stage-sidecar.sh` does all
-  three; `beforeBuildCommand`/`beforeDevCommand` run it automatically.
+  into `src-tauri/resources/` (`arduino-cli` under `resources/bin/`, a directory resource so the
+  Tauri `resources` map is identical on every platform) and bundled via Tauri `resources`. The
+  resource **pack is produced by the editor** workspace `@thingblock/thingblock-resource` and staged
+  from its `dist/thingblock-resource/` output — the link repo's own copy is a gitignored dev
+  convenience, not the source of truth. `scripts/stage-sidecar.sh` (macOS/Linux) and
+  `scripts/stage-sidecar.ps1` (Windows) do the staging; `beforeBuildCommand`/`beforeDevCommand` run
+  the right one automatically.
 
 Do not copy editor or link source into this repo, and do not add them as git submodules. They are
 released independently; this shell pins to built artifacts.
@@ -75,8 +80,15 @@ On a low-RAM machine the link's release build can be OOM-killed at full parallel
 with `CARGO_BUILD_JOBS=2` to cap it.
 
 Only the **host platform** is staged (one ~36 MB `arduino-cli`); cross-platform packaging is a CI
-concern. Windows additionally needs the `.exe` destination wired into `stage-sidecar.sh`,
-`tauri.conf.json`, and the resolved name in `lib.rs`.
+concern. Per-platform bundle targets live in `tauri.<platform>.conf.json` (Tauri auto-merges them):
+base `tauri.conf.json` is Linux (`deb`/`rpm`), `tauri.macos.conf.json` is `dmg`, and
+`tauri.windows.conf.json` is `nsis` plus PowerShell build hooks. Windows builds via
+`stage-sidecar.ps1` (the sidecar binary and `arduino-cli` carry `.exe`; `lib.rs` resolves the
+`.exe` name under `cfg!(windows)`), so no Git Bash is required on Windows.
+
+CI: `.github/workflows/release.yml` builds macOS (`aarch64-apple-darwin`) and Windows
+(`x86_64-pc-windows-msvc`) on a version tag (`v*`) and drafts a GitHub Release with the installers.
+Artifacts are currently **unsigned** (Gatekeeper/SmartScreen warnings expected).
 
 ## Agent defaults
 

@@ -38,8 +38,17 @@ fn spawn_link_sidecar(app: &tauri::AppHandle) -> Result<(), Box<dyn std::error::
         .path()
         .resolve("thingblock-resource", BaseDirectory::Resource)?;
     // The link spawns arduino-cli from the path we hand it; point it at the copy
-    // bundled beside the app rather than the link's compile-time source path.
-    let arduino_cli = app.path().resolve("arduino-cli", BaseDirectory::Resource)?;
+    // bundled beside the app rather than the link's compile-time source path. The
+    // binary is staged under `bin/` (a directory resource, uniform across
+    // platforms); only its filename carries the Windows `.exe`.
+    let arduino_cli_rel = if cfg!(windows) {
+        "bin/arduino-cli.exe"
+    } else {
+        "bin/arduino-cli"
+    };
+    let arduino_cli = app
+        .path()
+        .resolve(arduino_cli_rel, BaseDirectory::Resource)?;
 
     let (mut rx, _child) = app
         .shell()
