@@ -81,13 +81,15 @@ with `CARGO_BUILD_JOBS=2` to cap it.
 
 Only the **host platform** is staged (one ~36 MB `arduino-cli`); cross-platform packaging is a CI
 concern. Per-platform bundle targets live in `tauri.<platform>.conf.json` (Tauri auto-merges them):
-base `tauri.conf.json` is Linux (`deb`/`rpm`), `tauri.macos.conf.json` is `dmg`, and
+base `tauri.conf.json` is Linux (`deb`/`rpm`/`appimage`), `tauri.macos.conf.json` is `dmg`, and
 `tauri.windows.conf.json` is `nsis` plus PowerShell build hooks. Windows builds via
 `stage-sidecar.ps1` (the sidecar binary and `arduino-cli` carry `.exe`; `lib.rs` resolves the
 `.exe` name under `cfg!(windows)`), so no Git Bash is required on Windows.
 
-CI: `.github/workflows/release.yml` builds macOS (`aarch64-apple-darwin`) and Windows
-(`x86_64-pc-windows-msvc`) on a version tag (`v*`) and drafts a GitHub Release with the installers.
+CI: `.github/workflows/release.yml` builds macOS (`aarch64-apple-darwin`), Windows
+(`x86_64-pc-windows-msvc`), and Linux (`x86_64-unknown-linux-gnu` → deb, rpm, AppImage) on a version
+tag (`v*`) and drafts a GitHub Release with the installers (`workflow_dispatch` builds without
+releasing and uploads them as artifacts). The Linux job apt-installs webkit2gtk/GTK + `patchelf`.
 Artifacts are currently **unsigned** (Gatekeeper/SmartScreen warnings expected).
 
 ## Agent defaults

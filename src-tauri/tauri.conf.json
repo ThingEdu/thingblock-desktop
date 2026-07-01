@@ -27,7 +27,8 @@
     "active": true,
     "targets": [
       "deb",
-      "rpm"
+      "rpm",
+      "appimage"
     ],
     "externalBin": [
       "binaries/thingblock-link"
