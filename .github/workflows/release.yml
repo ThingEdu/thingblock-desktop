@@ -59,14 +59,16 @@ jobs:
             thingblock-desktop/src-tauri
             thingblock-link
 
-      # Tauri's Linux build needs webkit2gtk 4.1 + GTK; patchelf/file are for the
-      # AppImage bundler (Tauri fetches linuxdeploy itself; no FUSE/rpmbuild needed).
+      # Tauri's Linux build needs webkit2gtk 4.1 + GTK; libxdo-dev provides libxdo,
+      # which tray-icon/muda link against for X11 input simulation; patchelf/file are
+      # for the AppImage bundler (Tauri fetches linuxdeploy itself; no FUSE/rpmbuild
+      # needed).
       - name: Install Linux system deps
         if: runner.os == 'Linux'
         run: |
           sudo apt-get update
           sudo apt-get install -y libwebkit2gtk-4.1-dev libgtk-3-dev \
-            libayatana-appindicator3-dev librsvg2-dev libssl-dev \
+            libayatana-appindicator3-dev librsvg2-dev libssl-dev libxdo-dev \
             build-essential curl wget file patchelf
 
       - name: Install editor deps
@@ -76,6 +78,15 @@ jobs:
       - name: Install desktop deps
         working-directory: thingblock-desktop
         run: npm ci
+
+      # `npm ci` installs the editor workspace but does not build its packages.
+      # scratch-gui (build:editor) and the resource pack (stage:sidecar) consume the
+      # built dist/types of the shared @scratch/* libraries, so build those libs in
+      # dependency order first. Excludes scratch-gui itself, whose production webpack
+      # build is memory-hungry and is instead run as build:dev in beforeBuildCommand.
+      - name: Build editor libraries
+        working-directory: thingblock-editor
+        run: npm run build:libs
 
       # tauri-action runs beforeBuildCommand (stage:sidecar -> builds the link +
       # resource pack + stages arduino-cli; build:editor -> scratch-gui webpack),
