@@ -4,7 +4,7 @@
   "version": "0.1.0",
   "identifier": "com.thingblock.desktop",
   "build": {
-    "frontendDist": "../../scratch-editor/packages/scratch-gui/build",
+    "frontendDist": "../../thingblock-editor/packages/scratch-gui/build",
     "devUrl": "http://localhost:8601",
     "beforeDevCommand": "npm run stage:sidecar && npm run dev:editor",
     "beforeBuildCommand": "npm run stage:sidecar && npm run build:editor"

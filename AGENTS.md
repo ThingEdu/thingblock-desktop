@@ -5,8 +5,7 @@
 `thingblock-desktop` is the **Tauri (Rust) desktop shell** that packages the two existing
 ThingBlock projects into one installable app:
 
-- **`thingblock-editor`** (the `scratch-editor` repo) — the web editor UI, rendered in the Tauri
-  webview.
+- **`thingblock-editor`** — the web editor UI, rendered in the Tauri webview.
 - **`thingblock-link`** — the local Rust helper (WebSocket server + `arduino-cli` gRPC client)
   that compiles and flashes firmware. It runs as a **bundled sidecar process**, not as a library.
 
@@ -24,7 +23,7 @@ The three are independent git repos checked out as siblings on disk:
 
 ```text
 <parent>/
-├── scratch-editor/      # thingblock-editor — web UI (npm monorepo)
+├── thingblock-editor/   # web UI (npm monorepo)
 ├── thingblock-link/     # Rust WS helper binary (built as a sidecar)
 └── thingblock-desktop/  # THIS repo — Tauri shell
 ```
@@ -33,7 +32,7 @@ The three are independent git repos checked out as siblings on disk:
 
 - The **editor** is consumed as a built frontend: dev points at its webpack dev server
   (`http://localhost:8601`), release points at its production build
-  (`scratch-editor/packages/scratch-gui/build`).
+  (`thingblock-editor/packages/scratch-gui/build`).
 - The **link** is consumed as a **prebuilt sidecar binary**: `cargo build --release` in the link
   repo, then its binary is staged into `src-tauri/binaries/` (bundled via Tauri `externalBin`).
   Its runtime data — the `thingblock-resource/` pack and the host-platform `arduino-cli` — is staged

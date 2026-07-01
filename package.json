@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "build:editor": "NODE_ENV=production npm --prefix ../scratch-editor/packages/scratch-gui run build:dev",
-    "dev:editor": "npm --prefix ../scratch-editor/packages/scratch-gui run start",
+    "build:editor": "NODE_ENV=production npm --prefix ../thingblock-editor/packages/scratch-gui run build:dev",
+    "dev:editor": "npm --prefix ../thingblock-editor/packages/scratch-gui run start",
     "dist": "tauri build",
     "dist:debug": "tauri build --debug",
     "stage:sidecar": "bash scripts/stage-sidecar.sh",
