@@ -52,4 +52,34 @@ New-Item -ItemType Directory -Force -Path $BinResDir | Out-Null
 Copy-Item "$LinkDir\arduino-cli-binaries\arduino-cli_win_64bit\arduino-cli.exe" `
           (Join-Path $BinResDir "arduino-cli.exe") -Force
 
+# The daemon needs arduino-cli.yaml and a data/ bundle (--config-dir contract in
+# the link's daemon.rs). Stage the yaml plus a seed with the arduino:avr core
+# pre-installed so compiles work offline; the app copies this seed into a
+# writable per-user dir on first run. Mirrors thingblock-link/scripts/
+# bundle-data.sh. The CLI runs with cwd set to the seed dir so the yaml's
+# relative directories.* resolve into it — the same mechanism daemon.rs uses.
+Write-Host "Staging arduino config seed..."
+$SeedDir = Join-Path $ResDir "arduino"
+New-Item -ItemType Directory -Force -Path $SeedDir | Out-Null
+Copy-Item "$LinkDir\arduino-cli.yaml" (Join-Path $SeedDir "arduino-cli.yaml") -Force
+if (-not (Test-Path (Join-Path $SeedDir "data\packages\arduino"))) {
+    $Cli = Join-Path $BinResDir "arduino-cli.exe"
+    Push-Location $SeedDir
+    try {
+        & $Cli --config-file arduino-cli.yaml core update-index
+        if ($LASTEXITCODE -ne 0) { throw "arduino-cli core update-index failed" }
+        & $Cli --config-file arduino-cli.yaml core install arduino:avr
+        if ($LASTEXITCODE -ne 0) { throw "arduino-cli core install arduino:avr failed" }
+    } finally {
+        Pop-Location
+    }
+    # Prune the download cache and temp files; inventory.yaml carries a
+    # per-machine installation id/secret — never ship one.
+    Remove-Item -Recurse -Force (Join-Path $SeedDir "data\staging") -ErrorAction SilentlyContinue
+    Remove-Item -Recurse -Force (Join-Path $SeedDir "data\tmp") -ErrorAction SilentlyContinue
+    Remove-Item -Force (Join-Path $SeedDir "data\inventory.yaml") -ErrorAction SilentlyContinue
+} else {
+    Write-Host "arduino:avr already seeded; skipping install."
+}
+
 Write-Host "Sidecar staged."

@@ -51,4 +51,25 @@ esac
 mkdir -p "$RES_DIR/bin"
 cp -p "$LINK_DIR/arduino-cli-binaries/$CLI_SRC" "$RES_DIR/bin/arduino-cli"
 
+# The daemon needs arduino-cli.yaml and a data/ bundle (--config-dir contract in
+# the link's daemon.rs). Stage the yaml plus a seed with the arduino:avr core
+# pre-installed so compiles work offline; the app copies this seed into a
+# writable per-user dir on first run. Mirrors thingblock-link/scripts/
+# bundle-data.sh. The CLI runs with cwd set to the seed dir so the yaml's
+# relative directories.* resolve into it — the same mechanism daemon.rs uses.
+echo "Staging arduino config seed..."
+SEED_DIR="$RES_DIR/arduino"
+mkdir -p "$SEED_DIR"
+cp "$LINK_DIR/arduino-cli.yaml" "$SEED_DIR/arduino-cli.yaml"
+if [ ! -d "$SEED_DIR/data/packages/arduino" ]; then
+    (cd "$SEED_DIR" && "$RES_DIR/bin/arduino-cli" --config-file arduino-cli.yaml core update-index)
+    (cd "$SEED_DIR" && "$RES_DIR/bin/arduino-cli" --config-file arduino-cli.yaml core install arduino:avr)
+    # Prune the download cache and temp files; inventory.yaml carries a
+    # per-machine installation id/secret — never ship one.
+    rm -rf "$SEED_DIR/data/staging" "$SEED_DIR/data/tmp"
+    rm -f "$SEED_DIR/data/inventory.yaml"
+else
+    echo "arduino:avr already seeded; skipping install."
+fi
+
 echo "Sidecar staged."

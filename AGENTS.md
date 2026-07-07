@@ -35,9 +35,12 @@ The three are independent git repos checked out as siblings on disk:
   (`thingblock-editor/packages/scratch-gui/build`).
 - The **link** is consumed as a **prebuilt sidecar binary**: `cargo build --release` in the link
   repo, then its binary is staged into `src-tauri/binaries/` (bundled via Tauri `externalBin`).
-  Its runtime data — the `thingblock-resource/` pack and the host-platform `arduino-cli` — is staged
-  into `src-tauri/resources/` (`arduino-cli` under `resources/bin/`, a directory resource so the
-  Tauri `resources` map is identical on every platform) and bundled via Tauri `resources`. The
+  Its runtime data — the `thingblock-resource/` pack, the host-platform `arduino-cli`, and the
+  arduino config seed (`arduino-cli.yaml` + a `data/` bundle with the `arduino:avr` core
+  pre-installed, under `resources/arduino/`, mirroring the link repo's `scripts/bundle-data.sh`)
+  — is staged into `src-tauri/resources/` (`arduino-cli` under `resources/bin/`, a directory
+  resource so the Tauri `resources` map is identical on every platform) and bundled via Tauri
+  `resources`. The
   resource **pack is produced by the editor** workspace `@thingblock/thingblock-resource` and staged
   from its `dist/thingblock-resource/` output — the link repo's own copy is a gitignored dev
   convenience, not the source of truth. `scripts/stage-sidecar.sh` (macOS/Linux) and
@@ -57,6 +60,13 @@ released independently; this shell pins to built artifacts.
   passes them on spawn, so the link finds the bundled copies instead of its compile-time dev paths.
   Without `--arduino-cli`, the link falls back to its in-tree `arduino-cli-binaries/`, which only
   exists on a dev checkout — so a packaged build must always pass it.
+- The link's arduino-cli daemon runs against `arduino-cli.yaml` + a `data/` bundle in the dir we
+  pass as `--config-dir` (without it, the link falls back to its compile-time crate root — dev
+  only, same as `--arduino-cli`). arduino-cli **writes** into that dir (downloads, on-demand core
+  installs), and the Tauri resource dir is read-only when installed, so the shell seeds a writable
+  per-user copy under `app_local_data_dir()/arduino` and passes that: the yaml is overwritten every
+  launch, the `data/` bundle (~260 MB, avr core pre-installed) is copied only when absent. The seed
+  copy and sidecar spawn run on a background task so first launch doesn't block window creation.
 - The link owns its own tray icon and event loop as a standalone helper. When run as a sidecar it
   is a separate process from the Tauri window; that is expected.
 - On window close, the shell requests a graceful sidecar shutdown by writing to its stdin (content
@@ -84,8 +94,9 @@ cargo clippy --manifest-path src-tauri/Cargo.toml --all-targets -- -D warnings
 On a low-RAM machine the link's release build can be OOM-killed at full parallelism; prefix commands
 with `CARGO_BUILD_JOBS=2` to cap it.
 
-Only the **host platform** is staged (one ~36 MB `arduino-cli`); cross-platform packaging is a CI
-concern. Per-platform bundle targets live in `tauri.<platform>.conf.json` (Tauri auto-merges them):
+Only the **host platform** is staged (one ~36 MB `arduino-cli`, plus the ~320 MB arduino config
+seed — its `core install arduino:avr` downloads ~50 MB on the first staging run and is skipped
+once seeded); cross-platform packaging is a CI concern. Per-platform bundle targets live in `tauri.<platform>.conf.json` (Tauri auto-merges them):
 base `tauri.conf.json` is Linux (`deb`/`rpm`/`appimage`), `tauri.macos.conf.json` is `dmg`, and
 `tauri.windows.conf.json` is `nsis` plus PowerShell build hooks. Windows builds via
 `stage-sidecar.ps1` (the sidecar binary and `arduino-cli` carry `.exe`; `lib.rs` resolves the

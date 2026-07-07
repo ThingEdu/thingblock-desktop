@@ -35,7 +35,8 @@
     ],
     "resources": {
       "resources/thingblock-resource": "thingblock-resource",
-      "resources/bin": "bin"
+      "resources/bin": "bin",
+      "resources/arduino": "arduino"
     },
     "icon": [
       "icons/32x32.png",

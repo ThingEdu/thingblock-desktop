@@ -1,3 +1,4 @@
+use std::path::Path;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Mutex;
 use std::time::Duration;
@@ -101,6 +102,10 @@ async fn stop_link_sidecar(state: &LinkSidecarState) {
 /// Launch the `thingblock-link` helper as a sidecar process and pump its output
 /// into the log. The editor (in the webview) talks to it over WebSocket; this
 /// shell owns the process lifecycle, including stopping it when the window closes.
+///
+/// Path resolution happens here (fail fast on broken packaging); the arduino
+/// config seeding and the actual spawn run on a background task, because the
+/// first-run seed copies ~260 MB and must not hold up window creation.
 fn spawn_link_sidecar(app: &tauri::AppHandle) -> Result<(), Box<dyn std::error::Error>> {
     // The link resolves compile libs from a resource-pack directory bundled
     // beside the app. Pass it explicitly rather than relying on the link's
@@ -121,7 +126,59 @@ fn spawn_link_sidecar(app: &tauri::AppHandle) -> Result<(), Box<dyn std::error::
     let arduino_cli = app
         .path()
         .resolve(arduino_cli_rel, BaseDirectory::Resource)?;
+    // The daemon runs against `arduino-cli.yaml` + `data/` (the link's
+    // `--config-dir` contract). The bundled seed lives in the read-only resource
+    // dir, but arduino-cli writes into its `directories.*` (downloads, on-demand
+    // core installs), so it runs against a writable per-user copy instead.
+    let seed_dir = app.path().resolve("arduino", BaseDirectory::Resource)?;
+    let config_dir = app.path().app_local_data_dir()?.join("arduino");
 
+    let app = app.clone();
+    tauri::async_runtime::spawn(async move {
+        let seeded = tauri::async_runtime::spawn_blocking({
+            let seed_dir = seed_dir.clone();
+            let config_dir = config_dir.clone();
+            move || seed_arduino_config(&seed_dir, &config_dir)
+        })
+        .await;
+        match seeded {
+            Ok(Ok(())) => {}
+            Ok(Err(e)) => {
+                log::error!(
+                    "failed to seed arduino config dir {}: {e}",
+                    config_dir.display()
+                );
+                return;
+            }
+            Err(e) => {
+                log::error!("arduino config seeding task panicked: {e}");
+                return;
+            }
+        }
+        // The window may have been closed while seeding ran; a sidecar spawned
+        // now would outlive the shutdown sequence that already finished.
+        if app
+            .state::<LinkSidecarState>()
+            .closing
+            .load(Ordering::SeqCst)
+        {
+            return;
+        }
+        if let Err(e) = start_link_sidecar(&app, &resource_root, &arduino_cli, &config_dir) {
+            log::error!("failed to start thingblock-link: {e}");
+        }
+    });
+
+    Ok(())
+}
+
+/// Spawn the sidecar process and wire its lifecycle into `LinkSidecarState`.
+fn start_link_sidecar(
+    app: &tauri::AppHandle,
+    resource_root: &Path,
+    arduino_cli: &Path,
+    config_dir: &Path,
+) -> Result<(), tauri_plugin_shell::Error> {
     let (mut rx, child) = app
         .shell()
         .sidecar("thingblock-link")?
@@ -132,6 +189,8 @@ fn spawn_link_sidecar(app: &tauri::AppHandle) -> Result<(), Box<dyn std::error::
             &resource_root.to_string_lossy(),
             "--arduino-cli",
             &arduino_cli.to_string_lossy(),
+            "--config-dir",
+            &config_dir.to_string_lossy(),
         ])
         .spawn()?;
 
@@ -165,5 +224,45 @@ fn spawn_link_sidecar(app: &tauri::AppHandle) -> Result<(), Box<dyn std::error::
         }
     });
 
+    Ok(())
+}
+
+/// Materialize the writable arduino config dir from the bundled seed. The yaml
+/// is overwritten on every launch so config changes ship with app updates; the
+/// `data/` bundle is copied only when absent — it is user-mutable (on-demand
+/// core installs land there) and large, so it is seeded exactly once.
+fn seed_arduino_config(seed_dir: &Path, config_dir: &Path) -> std::io::Result<()> {
+    std::fs::create_dir_all(config_dir)?;
+    std::fs::copy(
+        seed_dir.join("arduino-cli.yaml"),
+        config_dir.join("arduino-cli.yaml"),
+    )?;
+    let data_dst = config_dir.join("data");
+    if !data_dst.exists() {
+        copy_dir_recursive(&seed_dir.join("data"), &data_dst)?;
+    }
+    Ok(())
+}
+
+/// Recursive directory copy. Symlinks are recreated rather than dereferenced —
+/// the avr-gcc toolchain in the seed relies on them (Unix only; the Windows
+/// toolchain has none).
+fn copy_dir_recursive(src: &Path, dst: &Path) -> std::io::Result<()> {
+    std::fs::create_dir_all(dst)?;
+    for entry in std::fs::read_dir(src)? {
+        let entry = entry?;
+        let dst_path = dst.join(entry.file_name());
+        let file_type = entry.file_type()?;
+        if file_type.is_dir() {
+            copy_dir_recursive(&entry.path(), &dst_path)?;
+        } else if file_type.is_symlink() {
+            #[cfg(unix)]
+            std::os::unix::fs::symlink(std::fs::read_link(entry.path())?, &dst_path)?;
+            #[cfg(not(unix))]
+            std::fs::copy(entry.path(), &dst_path)?;
+        } else {
+            std::fs::copy(entry.path(), &dst_path)?;
+        }
+    }
     Ok(())
 }

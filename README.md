@@ -55,6 +55,9 @@ This builds `thingblock-link` in release mode, stages its binary/resources into
 Tauri window against it. The bundled `thingblock-link` sidecar is spawned automatically and
 listens on `ws://localhost:3030`.
 
+The first staging run also seeds the arduino config bundle (downloads the `arduino:avr` core,
+~50 MB); subsequent runs skip it.
+
 On a low-RAM machine the link's release build can be OOM-killed at full parallelism; prefix
 commands with `CARGO_BUILD_JOBS=2` to cap it.
 
