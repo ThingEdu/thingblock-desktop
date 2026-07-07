@@ -68,7 +68,7 @@ npm run dist         # production installer
 npm run dist:debug   # faster unoptimized bundle, for local testing
 ```
 
-Installers land in `src-tauri/target/release/bundle/<format>/` (Linux: `deb`, `rpm`, `AppImage`).
+Installers land in `src-tauri/target/release/bundle/<format>/` (Linux: `deb`, `rpm`).
 Only the host platform is staged; cross-platform packaging is a CI concern.
 
 ## Lint / format

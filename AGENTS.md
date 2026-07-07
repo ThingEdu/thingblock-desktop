@@ -89,7 +89,7 @@ cargo clippy --manifest-path src-tauri/Cargo.toml --all-targets -- -D warnings
 
 `dev`/`dist` run `stage:sidecar` and the editor build automatically (via
 `beforeDevCommand`/`beforeBuildCommand`). Installers land in
-`src-tauri/target/release/bundle/<format>/` (Linux: deb, rpm, AppImage).
+`src-tauri/target/release/bundle/<format>/` (Linux: deb, rpm).
 
 On a low-RAM machine the link's release build can be OOM-killed at full parallelism; prefix commands
 with `CARGO_BUILD_JOBS=2` to cap it.
@@ -97,15 +97,15 @@ with `CARGO_BUILD_JOBS=2` to cap it.
 Only the **host platform** is staged (one ~36 MB `arduino-cli`, plus the ~320 MB arduino config
 seed — its `core install arduino:avr` downloads ~50 MB on the first staging run and is skipped
 once seeded); cross-platform packaging is a CI concern. Per-platform bundle targets live in `tauri.<platform>.conf.json` (Tauri auto-merges them):
-base `tauri.conf.json` is Linux (`deb`/`rpm`/`appimage`), `tauri.macos.conf.json` is `dmg`, and
+base `tauri.conf.json` is Linux (`deb`/`rpm`), `tauri.macos.conf.json` is `dmg`, and
 `tauri.windows.conf.json` is `nsis` plus PowerShell build hooks. Windows builds via
 `stage-sidecar.ps1` (the sidecar binary and `arduino-cli` carry `.exe`; `lib.rs` resolves the
 `.exe` name under `cfg!(windows)`), so no Git Bash is required on Windows.
 
 CI: `.github/workflows/release.yml` builds macOS (`aarch64-apple-darwin`), Windows
-(`x86_64-pc-windows-msvc`), and Linux (`x86_64-unknown-linux-gnu` → deb, rpm, AppImage) on a version
+(`x86_64-pc-windows-msvc`), and Linux (`x86_64-unknown-linux-gnu` → deb, rpm) on a version
 tag (`v*`) and drafts a GitHub Release with the installers (`workflow_dispatch` builds without
-releasing and uploads them as artifacts). The Linux job apt-installs webkit2gtk/GTK + `patchelf`.
+releasing and uploads them as artifacts). The Linux job apt-installs webkit2gtk/GTK.
 Artifacts are currently **unsigned** (Gatekeeper/SmartScreen warnings expected).
 
 ## Agent defaults
