@@ -59,6 +59,11 @@ released independently; this shell pins to built artifacts.
   exists on a dev checkout — so a packaged build must always pass it.
 - The link owns its own tray icon and event loop as a standalone helper. When run as a sidecar it
   is a separate process from the Tauri window; that is expected.
+- On window close, the shell requests a graceful sidecar shutdown by writing to its stdin (content
+  is irrelevant — any stdin activity is the signal) and waits briefly for it to exit before falling
+  back to a hard kill. This rides stdin rather than the WS server so it keeps working even if the
+  server is unhealthy, and behaves identically across Linux/macOS/Windows unlike an OS signal. See
+  `watch_stdin_for_shutdown` in the link repo's `src/ui/tray.rs`.
 
 ## Build, run, lint
 
