@@ -64,8 +64,12 @@ released independently; this shell pins to built artifacts.
   pass as `--config-dir` (without it, the link falls back to its compile-time crate root — dev
   only, same as `--arduino-cli`). arduino-cli **writes** into that dir (downloads, on-demand core
   installs), and the Tauri resource dir is read-only when installed, so the shell seeds a writable
-  per-user copy under `app_local_data_dir()/arduino` and passes that: the yaml is overwritten every
-  launch, the `data/` bundle (~260 MB, avr core pre-installed) is copied only when absent. The seed
+  per-user copy under `local_data_dir()/ThingBlock` (e.g. `%LOCALAPPDATA%\ThingBlock` on Windows)
+  and passes that: the yaml is overwritten every launch, the `data/` bundle (~260 MB, avr core
+  pre-installed) is copied only when absent. The dir is deliberately short — the esp32 GCC
+  toolchains resolve C++ multilib headers through include paths deep enough that a longer base
+  (like the app's `com.thingblock.desktop` data dir) exceeds Windows' 260-char MAX_PATH and breaks
+  compiles with `bits/c++config.h: No such file or directory`. The seed
   copy and sidecar spawn run on a background task so first launch doesn't block window creation.
 - The link owns its own tray icon and event loop as a standalone helper. When run as a sidecar it
   is a separate process from the Tauri window; that is expected.

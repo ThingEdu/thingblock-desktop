@@ -130,8 +130,14 @@ fn spawn_link_sidecar(app: &tauri::AppHandle) -> Result<(), Box<dyn std::error::
     // `--config-dir` contract). The bundled seed lives in the read-only resource
     // dir, but arduino-cli writes into its `directories.*` (downloads, on-demand
     // core installs), so it runs against a writable per-user copy instead.
+    //
+    // The copy lives in a deliberately short dir (`%LOCALAPPDATA%\ThingBlock` on
+    // Windows), not under the app's `com.thingblock.desktop` data dir: the esp32
+    // GCC toolchains resolve their C++ multilib headers through include paths
+    // deep enough that the longer base pushed them past Windows' 260-char
+    // MAX_PATH, breaking compiles with `bits/c++config.h: No such file`.
     let seed_dir = app.path().resolve("arduino", BaseDirectory::Resource)?;
-    let config_dir = app.path().app_local_data_dir()?.join("arduino");
+    let config_dir = app.path().local_data_dir()?.join("ThingBlock");
 
     let app = app.clone();
     tauri::async_runtime::spawn(async move {
