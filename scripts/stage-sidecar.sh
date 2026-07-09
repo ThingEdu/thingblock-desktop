@@ -45,8 +45,9 @@ cp -R "$EDITOR_DIR/packages/thingblock-resource/dist/thingblock-resource" "$RES_
 # is staged here; cross-platform packaging is a CI concern.
 echo "Staging host arduino-cli..."
 case "$TARGET_TRIPLE" in
-    *apple-darwin*) CLI_SRC="arduino-cli_mac_arm64/arduino-cli" ;;
-    *)             CLI_SRC="arduino-cli_linux_64bit/arduino-cli" ;;
+    *apple-darwin*)  CLI_SRC="arduino-cli_mac_arm64/arduino-cli" ;;
+    aarch64-*linux*) CLI_SRC="arduino-cli_linux_arm64/arduino-cli" ;;
+    *)               CLI_SRC="arduino-cli_linux_64bit/arduino-cli" ;;
 esac
 mkdir -p "$RES_DIR/bin"
 cp -p "$LINK_DIR/arduino-cli-binaries/$CLI_SRC" "$RES_DIR/bin/arduino-cli"
