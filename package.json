@@ -1,12 +1,14 @@
 {
   "name": "thingblock-desktop",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "private": true,
   "scripts": {
     "build:editor": "cross-env NODE_ENV=production npm --prefix ../thingblock-editor/packages/scratch-gui run build:dev",
     "dev:editor": "npm --prefix ../thingblock-editor/packages/scratch-gui run start",
     "dist": "tauri build",
     "dist:debug": "tauri build --debug",
+    "stage:frontend": "bash scripts/stage-frontend.sh",
+    "stage:frontend:win": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/stage-frontend.ps1",
     "stage:sidecar": "bash scripts/stage-sidecar.sh",
     "stage:sidecar:win": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/stage-sidecar.ps1",
     "tauri": "tauri"

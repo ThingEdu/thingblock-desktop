@@ -93,8 +93,10 @@ jobs:
         run: npm run build:libs
 
       # tauri-action runs beforeBuildCommand (stage:sidecar -> builds the link +
-      # resource pack + stages arduino-cli; build:editor -> scratch-gui webpack),
-      # then `tauri build`. On a tag push it also drafts the Release and uploads
+      # resource pack + stages arduino-cli; build:editor -> scratch-gui webpack;
+      # stage:frontend -> copies that build plus the pack into frontend/, which
+      # frontendDist points at), then `tauri build`. On a tag push it also drafts
+      # the Release and uploads
       # the installers; on workflow_dispatch tagName is empty, so it only builds
       # (no release) and we upload the installers as workflow artifacts instead.
       - name: Build and release

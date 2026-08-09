@@ -31,8 +31,9 @@ The three are independent git repos checked out as siblings on disk:
 `thingblock-desktop` reaches out to the siblings rather than embedding them:
 
 - The **editor** is consumed as a built frontend: dev points at its webpack dev server
-  (`http://localhost:8601`), release points at its production build
-  (`thingblock-editor/packages/scratch-gui/build`).
+  (`http://localhost:8601`), release points at `frontend/` — a staged copy of its production build
+  (`thingblock-editor/packages/scratch-gui/build`) that this repo owns (see "The frontend
+  contract"). `frontendDist` points at the staged copy, never at the editor's build directly.
 - The **link** is consumed as a **prebuilt sidecar binary**: `cargo build --release` in the link
   repo, then its binary is staged into `src-tauri/binaries/` (bundled via Tauri `externalBin`).
   Its runtime data — the `thingblock-resource/` pack, the host-platform `arduino-cli`, and the
@@ -55,6 +56,22 @@ released independently; this shell pins to built artifacts.
 - The sidecar is spawned with `--port 3030` (the link's default WS port). The webview connects to
   `ws://localhost:3030`. If this port ever changes, it must change on both sides in lockstep — it
   is a contract with the editor, not a local detail.
+- On Windows the webview is Chromium (WebView2), so the editor's HTTP calls into the link
+  (`/resources`, `/api/…`) are cross-address-space: the frontend is served from
+  `http://tauri.localhost`, a scheme-intercepted response with no source IP, which Chromium scores
+  as more public than loopback. `additionalBrowserArgs` in `tauri.conf.json` disables those checks
+  (`LocalNetworkAccessChecks` is the Chromium 142 permission gate; the two `PrivateNetworkAccess*`
+  names are its preflight-based predecessor). WebSockets are not gated, which is why the WS pipe
+  works while resource loading fails. Two constraints when editing that string: setting it replaces
+  wry's entire default arg string, so the three `ms*` names must stay; and it belongs in
+  `tauri.conf.json`, not `tauri.windows.conf.json`, because platform configs merge by RFC 7386 and
+  a `windows` array there would replace the whole window definition.
+- The resource packs no longer travel over that HTTP route: `stage-frontend` ships them **inside the
+  frontend**, so the editor reads them from its own origin and no address-space check applies (see
+  "The frontend contract"). The remaining cross-origin call is `GET /api/platforms/{id}`
+  (`getPlatformStatus`, the core-install flow). Move that read onto the WS envelope and the
+  `additionalBrowserArgs` flag can come out — which it eventually must, since Microsoft intends to
+  remove it once `CoreWebView2PermissionKind` gains LNA values.
 - The link resolves its `thingblock-resource/` pack and `arduino-cli` from paths we pass it
   (`--resource-root`, `--arduino-cli`). The shell resolves both from `BaseDirectory::Resource` and
   passes them on spawn, so the link finds the bundled copies instead of its compile-time dev paths.
@@ -78,6 +95,23 @@ released independently; this shell pins to built artifacts.
   back to a hard kill. This rides stdin rather than the WS server so it keeps working even if the
   server is unhealthy, and behaves identically across Linux/macOS/Windows unlike an OS signal. See
   `watch_stdin_for_shutdown` in the link repo's `src/ui/tray.rs`.
+
+## The frontend contract (don't drift from it)
+
+- `scripts/stage-frontend.{sh,ps1}` copies the editor's production build into `frontend/`
+  (gitignored) and drops the `thingblock-resource` pack in beside it, so the packs are served from
+  the editor's **own origin** — no CORS, no address-space check, on any platform. It runs *after*
+  `build:editor` in `beforeBuildCommand`, because it consumes that build's output.
+- Never stage into the editor's own tree. `thingblock-editor` is a backend-agnostic client that also
+  fronts the cloud service; a pack baked into its build would make the pack editor-versioned instead
+  of service-versioned and leave desktop-only bytes in an artifact meant to be reused. This repo
+  owning `frontend/` is what keeps that boundary.
+- The editor learns the pack base from `globalThis.__THINGBLOCK_RESOURCE_BASE__`, injected into the
+  staged `index.html` by the staging script (the editor's `link-controller.js` reads it and passes it
+  to `LinkClient` as `resourceBase`). Injected into the staged copy, not built into the editor, for
+  the same reason. Unset in dev — `beforeDevCommand` does no frontend staging, so dev falls back to
+  the link's own `/resources` route, which works there because the dev origin
+  (`http://localhost:8601`) is itself loopback.
 
 ## Build, run, lint
 

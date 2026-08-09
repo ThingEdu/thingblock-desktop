@@ -1,13 +1,13 @@
 {
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
   "productName": "ThingBlock",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "identifier": "com.thingblock.desktop",
   "build": {
-    "frontendDist": "../../thingblock-editor/packages/scratch-gui/build",
+    "frontendDist": "../frontend",
     "devUrl": "http://localhost:8601",
     "beforeDevCommand": "npm run stage:sidecar && npm run dev:editor",
-    "beforeBuildCommand": "npm run stage:sidecar && npm run build:editor"
+    "beforeBuildCommand": "npm run stage:sidecar && npm run build:editor && npm run stage:frontend"
   },
   "app": {
     "windows": [
@@ -16,7 +16,8 @@
         "width": 1280,
         "height": 800,
         "resizable": true,
-        "fullscreen": false
+        "fullscreen": false,
+        "additionalBrowserArgs": "--disable-features=msWebOOUI,msPdfOOUI,msSmartScreenProtection,LocalNetworkAccessChecks,PrivateNetworkAccessRespectPreflightResults,BlockInsecurePrivateNetworkRequests"
       }
     ],
     "security": {

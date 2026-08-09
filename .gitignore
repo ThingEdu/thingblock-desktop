@@ -9,6 +9,7 @@ npm-debug.log*
 
 # Build output
 /dist/
+/frontend/
 
 # OS
 .DS_Store
