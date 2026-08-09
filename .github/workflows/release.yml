@@ -31,19 +31,19 @@ jobs:
       - name: Checkout thingblock-desktop
         uses: actions/checkout@v4
         with:
-          repository: lgthevinh/thingblock-desktop
+          repository: ThingEdu/thingblock-desktop
           path: thingblock-desktop
 
       - name: Checkout thingblock-editor
         uses: actions/checkout@v4
         with:
-          repository: lgthevinh/thingblock-editor
+          repository: ThingEdu/thingblock-editor
           path: thingblock-editor
 
       - name: Checkout thingblock-link
         uses: actions/checkout@v4
         with:
-          repository: lgthevinh/thingblock-link
+          repository: ThingEdu/thingblock-link
           path: thingblock-link
 
       - name: Setup Node
