@@ -1,6 +1,6 @@
 {
   "name": "thingblock-desktop",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "private": true,
   "scripts": {
     "build:editor": "cross-env NODE_ENV=production npm --prefix ../thingblock-editor/packages/scratch-gui run build:dev",
