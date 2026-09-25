@@ -158,3 +158,52 @@ so a pack id always equals its opcode prefix.
   `ScratchBlocks` is passed where the full module type is expected). Pre-existing; the test itself
   passes under Vitest.
 - Installers are unsigned.
+
+## 0.3.2 — 2026-08-11
+
+- **Windows install no longer needs the Visual C++ Redistributable** — the bundled
+  `thingblock-link` binary is statically linked against the MSVC runtime.
+- **DHT readings were unreliable on boards faster than 16 MHz** (e.g. ESP32) — fixed in the
+  bundled `thingblock-resource` pack (editor #4).
+
+## 0.3.1 — 2026-08-09
+
+- **Resource packs failed to load on Windows.** The editor fetched device packs (icons, board
+  assets) over HTTP from the bundled link helper, which Chromium's private-network-access checks
+  block on Windows. The editor build and resource pack are now staged together into `frontend/`
+  and served same-origin; `globalThis.__THINGBLOCK_RESOURCE_BASE__` tells the editor to read packs
+  from there instead of over the network.
+
+## 0.3.0
+
+- The `thingblock-desktop`, `thingblock-editor` and `thingblock-link` repos moved to the ThingEdu
+  org; `release.yml` checks out `ThingEdu/*`.
+- Picks up the updated `thingblock-resource` pack.
+
+## 0.2.1
+
+- **Linux arm64 installers** — native `aarch64` `.deb`/`.rpm`, built on an arm64 runner with the
+  arm64 `arduino-cli` and AVR toolchain seed.
+- **ESP32 compiles failed on Windows** with `fatal error: bits/c++config.h: No such file or
+  directory`. The ESP32 GCC 14 toolchains resolve their C++ multilib headers through include paths
+  deep enough that the old arduino data directory (`%LOCALAPPDATA%\com.thingblock.desktop\arduino`)
+  pushed them past Windows' 260-character `MAX_PATH`. The arduino config and data now live under
+  `%LOCALAPPDATA%\ThingBlock` (`~/Library/Application Support/ThingBlock` on macOS,
+  `~/.local/share/ThingBlock` on Linux). The old directory is not migrated.
+
+## 0.2.0
+
+- The Arduino CLI config and AVR toolchain seed (~320 MB) are bundled and copied into the user data
+  directory on first run, so compile and flash work offline on a clean machine (0.1.0's packaged
+  app failed to start its compile daemon).
+- BLE connection flow selected by the board's backend.
+- The link helper shuts down gracefully when the app window closes.
+- New app icon; updated VIA BanhMi board assets.
+- AppImage dropped: linuxdeploy fails on the ELF toolchain binaries in the bundled arduino seed.
+
+## 0.1.0
+
+- First installable build: Tauri shell bundling the editor and the link helper as a sidecar, with
+  the `thingblock-resource` pack and host `arduino-cli` staged alongside.
+- Windows, macOS and Linux installers (`.exe`, `.dmg`, `.deb`, `.rpm`, `.AppImage`) built by
+  GitHub Actions.
