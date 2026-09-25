@@ -14,7 +14,7 @@ Also sync `package-lock.json` and `src-tauri/Cargo.lock`. The sibling repos carr
 
 ## 2. Update `CHANGELOG.md`
 
-Add a `## VERSION — DATE` section to `CHANGELOG.md` covering all three repos since the previous tag. [GitHub automatically generated release notes] can serve as a starting point.
+Add a `## VERSION — DATE` section to `CHANGELOG.md` covering all three repos since the previous tag, with the technical detail developers need. [GitHub automatically generated release notes] can serve as a starting point.
 
 ## 3. Commit changes
 
@@ -45,7 +45,7 @@ The workflow checks out `thingblock-editor` at `main` and `thingblock-link` at `
 
 ## 7. Publish the GitHub release
 
-Once all three matrix legs finish and the draft has exactly 4 assets, set the draft's notes to the new `CHANGELOG.md` section, review, and publish it from the [releases page]:
+Once all three matrix legs finish and the draft has exactly 4 assets, write the release notes, review, and publish it from the [releases page]. Release notes are for end users, while `CHANGELOG.md` is for developers: keep them short — what's new, what's fixed, what's removed, known limits, downloads — one line per item with no internals, and link to `CHANGELOG.md` for details.
 
 ```sh
 gh release edit vVERSION --notes-file NOTES.md
