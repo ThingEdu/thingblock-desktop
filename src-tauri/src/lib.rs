@@ -40,6 +40,17 @@ pub fn run() {
                         .build(),
                 )?;
             }
+            // Release builds have no other way to surface a frontend error: the GUI
+            // reports project-load failures through a generic alert and puts the real
+            // exception on the console. Opening the inspector is opt-in via the
+            // environment so support can ask for it without shipping it to every user.
+            if std::env::var_os("THINGBLOCK_DEVTOOLS").is_some() {
+                // The window carries the config's default label; take whichever one
+                // exists rather than hard-coding it.
+                if let Some(window) = app.webview_windows().values().next() {
+                    window.open_devtools();
+                }
+            }
             spawn_link_sidecar(app.handle())?;
             Ok(())
         })

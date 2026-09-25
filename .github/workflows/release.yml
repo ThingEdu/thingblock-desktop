@@ -38,12 +38,14 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: ThingEdu/thingblock-editor
+          ref: preview/all-work
           path: thingblock-editor
 
       - name: Checkout thingblock-link
         uses: actions/checkout@v4
         with:
           repository: ThingEdu/thingblock-link
+          ref: preview/all-work
           path: thingblock-link
 
       - name: Setup Node
