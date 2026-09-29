@@ -1,6 +1,6 @@
 # Releasing
 
-Adapted from [thoughtbot's release template](template/RELEASING.md.template) for thingblock-desktop's tag-triggered, GitHub Actions-built release flow.
+Adapted from the [release template](template/RELEASING.md.template) for thingblock-desktop's tag-triggered, GitHub Actions-built release flow.
 
 ## 1. Update the version
 
