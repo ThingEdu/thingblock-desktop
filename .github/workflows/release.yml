@@ -84,16 +84,16 @@ jobs:
         run: npm ci
 
       # `npm ci` installs the editor workspace but does not build its packages.
-      # scratch-gui (build:editor) and the resource pack (stage:sidecar) consume the
-      # built dist/types of the shared @scratch/* libraries, so build those libs in
-      # dependency order first. Excludes scratch-gui itself, whose production webpack
+      # thingblock-gui (build:editor) and the resource pack (stage:sidecar) consume the
+      # built dist/types of the shared @thingblock/* libraries, so build those libs in
+      # dependency order first. Excludes thingblock-gui itself, whose production webpack
       # build is memory-hungry and is instead run as build:dev in beforeBuildCommand.
       - name: Build editor libraries
         working-directory: thingblock-editor
         run: npm run build:libs
 
       # tauri-action runs beforeBuildCommand (stage:sidecar -> builds the link +
-      # resource pack + stages arduino-cli; build:editor -> scratch-gui webpack;
+      # resource pack + stages arduino-cli; build:editor -> thingblock-gui webpack;
       # stage:frontend -> copies that build plus the pack into frontend/, which
       # frontendDist points at), then `tauri build`. On a tag push it also drafts
       # the Release and uploads
@@ -103,7 +103,7 @@ jobs:
         uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          # scratch-gui's webpack build is memory-hungry on hosted runners.
+          # thingblock-gui's webpack build is memory-hungry on hosted runners.
           NODE_OPTIONS: --max-old-space-size=4096
         with:
           projectPath: thingblock-desktop

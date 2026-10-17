@@ -16,7 +16,7 @@ DESKTOP_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 EDITOR_DIR="$(cd "$DESKTOP_DIR/../thingblock-editor" && pwd)"
 
 FRONTEND_DIR="$DESKTOP_DIR/frontend"
-EDITOR_BUILD="$EDITOR_DIR/packages/scratch-gui/build"
+EDITOR_BUILD="$EDITOR_DIR/packages/thingblock-gui/build"
 RESOURCE_PACK="$EDITOR_DIR/packages/thingblock-resource/dist/thingblock-resource"
 
 if [ ! -d "$EDITOR_BUILD" ]; then

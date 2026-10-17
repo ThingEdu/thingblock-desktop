@@ -20,14 +20,14 @@ New-Item -ItemType Directory -Force -Path $BinDir | Out-Null
 Copy-Item "$LinkDir\target\release\thingblock-link.exe" `
           (Join-Path $BinDir "thingblock-link-$TargetTriple.exe") -Force
 
-# The resource pack type-checks against @scratch/scratch-blocks (type-only imports,
+# The resource pack type-checks against @thingblock/thingblock-blocks (type-only imports,
 # erased from the built output), so its tsc step needs that package's emitted
 # declarations. A fresh `npm ci` installs but does not build workspace packages, so
-# build scratch-blocks first to produce its dist/types — matching the editor
+# build thingblock-blocks first to produce its dist/types — matching the editor
 # monorepo's own build order.
-Write-Host "Building @scratch/scratch-blocks (resource pack's type declarations)..."
-& npm --prefix "$EditorDir\packages\scratch-blocks" run build
-if ($LASTEXITCODE -ne 0) { throw "scratch-blocks build failed" }
+Write-Host "Building @thingblock/thingblock-blocks (resource pack's type declarations)..."
+& npm --prefix "$EditorDir\packages\thingblock-blocks" run build
+if ($LASTEXITCODE -ne 0) { throw "thingblock-blocks build failed" }
 
 # The pack is produced by the editor workspace @thingblock/thingblock-resource;
 # build it and stage its output so the bundled pack always tracks that single

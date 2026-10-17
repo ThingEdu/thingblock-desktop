@@ -3,8 +3,8 @@
   "version": "0.4.0",
   "private": true,
   "scripts": {
-    "build:editor": "cross-env NODE_ENV=production npm --prefix ../thingblock-editor/packages/scratch-gui run build:dev",
-    "dev:editor": "npm --prefix ../thingblock-editor/packages/scratch-gui run start",
+    "build:editor": "cross-env NODE_ENV=production npm --prefix ../thingblock-editor/packages/thingblock-gui run build:dev",
+    "dev:editor": "npm --prefix ../thingblock-editor/packages/thingblock-gui run start",
     "dist": "tauri build",
     "dist:debug": "tauri build --debug",
     "stage:frontend": "bash scripts/stage-frontend.sh",

@@ -41,7 +41,7 @@ artifacts (see the architecture doc for how).
 
 ```sh
 npm install
-npm --prefix ../thingblock-editor/packages/scratch-gui install
+npm --prefix ../thingblock-editor/packages/thingblock-gui install
 ```
 
 ## Run in dev
