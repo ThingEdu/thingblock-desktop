@@ -7,6 +7,42 @@ this file is the one place that says what changed across all of them.
 Entries name the PR that carries the change and whether it is merged or still open, because a
 preview installer can contain work that no `main`/`master` has yet.
 
+## 0.5.0 — 2026-10-30
+
+Built from desktop `master` against editor `main` and link `master`; everything below is merged.
+Installers: `x86_64-pc-windows-msvc` (nsis), `aarch64-apple-darwin` (dmg), Linux x64 (deb/rpm).
+Unsigned — Gatekeeper and SmartScreen will warn. Resource pack `0.5`; link unchanged at `0.4.0`.
+
+### Peripherals
+
+- **SH1106 OLED** — editor **#24 (merged)**, `3559b4031`. The common 1.3" 128x64 OLED uses an
+  SH1106 controller, which acknowledges SSD1306 writes on the same I2C address and stays dark. The
+  OLED init block gains a chip field that switches to the vendored Adafruit SH110X driver; colour
+  names are aliased and scroll calls become no-ops, so every OLED block works on either chip.
+  Projects saved without the field keep SSD1306.
+- **Rotary encoder pack** (`encoder`) — editor **#24**, `3559b4031`, `cb30c7c11`. Init (A/B/button
+  pins), position in detent clicks, reset, and button pressed. Both phases are read through
+  interrupts so turns are not lost while the sketch is in `delay()`; the ISR keeps its attribute
+  out of the generated globals bucket.
+
+### Editor internals (breaking for embedders, not for projects)
+
+- **Packages renamed to the `@thingblock/` scope** — editor **#26 (merged)**, `23b9a3105`
+  (`scratch-gui` → `thingblock-gui`, `scratch-vm` → `thingblock-vm`, `scratch-blocks` →
+  `thingblock-blocks`, …). Desktop follows the new paths in `df705e5`.
+- **VM split into owned parts and one event bus** — editor **#27 (merged)**. `vm.link`
+  (`LinkController`: boards, compile, upload, firmware, monitor), `vm.devices`, `vm.workspace` and
+  `vm.project` replace the VM mixins. One `EventBus` per VM is shared as `vm.events` and
+  `runtime.events`; `VirtualMachine` no longer extends `EventEmitter`. Monitor input goes through
+  `vm.writeMonitor()`, which writes the line to a connected board and also feeds the sensing
+  `answer`. Separating public VM events from internal runtime events is tracked in editor #28.
+- **Scratch project server removed** — editor `0c11d8317`. The GUI no longer fetches `#<id>`
+  projects from `projects.scratch.mit.edu`, and the Scratch project/asset web stores and
+  `projectHost` / `assetHost` / `projectToken` props are gone. Sharing projects online is tracked in
+  editor #29.
+- Removed the VM playground, `scratch-svg-renderer`, unused GUI dependencies and the unused
+  upstream CI workflows.
+
 ## 0.4.0 — 2026-09-26
 
 Built from desktop `master` against editor `main` and link `master`; everything below is merged.
