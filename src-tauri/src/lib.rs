@@ -8,6 +8,7 @@ use tauri::{Manager, WindowEvent};
 use tauri_plugin_shell::process::{CommandChild, CommandEvent};
 use tauri_plugin_shell::ShellExt;
 
+mod confirm_dialog;
 mod project_file;
 
 /// WS port the bundled `thingblock-link` sidecar listens on. Contract with the
@@ -41,7 +42,8 @@ pub fn run() {
             project_file::pick_open_path,
             project_file::write_project_file,
             project_file::read_project_file,
-            project_file::set_window_title
+            project_file::set_window_title,
+            confirm_dialog::confirm_dialog
         ])
         .setup(|app| {
             if cfg!(debug_assertions) {
