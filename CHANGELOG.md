@@ -7,6 +7,49 @@ this file is the one place that says what changed across all of them.
 Entries name the PR that carries the change and whether it is merged or still open, because a
 preview installer can contain work that no `main`/`master` has yet.
 
+## 0.6.0 — 2026-11-03
+
+Preview for the FanRoc 2026-27 season. Built from desktop `release/v0.6.0` against editor
+`feat/sim-lessons-v1` (**#53, open**; it carries #42 and #43, both open) and link
+`fix/pin-esp32-core` (**#11, open**, on top of **#10, open**). Nothing below is on `main`/`master`
+yet. Installer: `aarch64-apple-darwin` (dmg), unsigned.
+
+### Boards
+
+- **Board list trimmed to ThingBot, ESP32-C3 and Via Bánh Mì** — editor **#53**. Arduino Uno,
+  Arduino Nano and ESP32 are hidden from the picker; they stay registered, so projects saved on them
+  still open and build.
+- **One motor direction everywhere** — editor **#42**. Forward is channel A = 0, B = PWM in upload,
+  Live and phone control; M3_B moves from PCA9685 channel 8 (the S5 servo) to 6. The Telemetrix
+  firmware needs the matching MEO-3 patch (see `UPSTREAM.md` in the thingbot pack).
+- **PS2 on the ThingBot port** (DAT 7, CMD 2, ATT 10, CLK 6) with a bounded init — editor **#42**.
+- **Live mode** reverses, stops, uses the firmware's pin-mode constants, and defaults the
+  ultrasonic sensor to TRIG 0 / ECHO 4 — editor **#42**.
+
+### Simulator and lessons
+
+- **Simulator panel and graded lessons**, ported from editor #25 onto the TypeScript VM — editor
+  **#53**. 14 lessons: the 4 originals plus the 10 thingbot-sim lessons (editor **#54**, merged into
+  #53). The checker grades SW presses, the distance slider, the virtual PS2 pad and servo sweeps.
+- Virtual ultrasonic sensor and PS2 gamepad; lessons can declare the modules they need.
+
+### Examples
+
+- **30 example projects** under File → Examples — editor **#43**: 18 K12 basics, 2 FanRoc, 10
+  thingbot-sim.
+
+### Fixes
+
+- Code regenerates when a project, example or lesson loads, and before Run/Step/Reset/Upload, so
+  Upload no longer sends the previous program (editor #46 and a QA find).
+- Vietnamese UI, dialogs, lesson verdicts and all hardware blocks (editor #40, #48).
+- Language and board are remembered; new projects are named "ThingBlock Project" (editor #49).
+- Variables in number inputs, custom-block parameters, digital/analog read blocks (editor #44).
+- Float variables survive a reload (editor #39); RGB LED strip and Servo packs build on esp32 core
+  3.3.11 (editor #38); servo motions started without waiting advance from `loop()` (editor #37).
+- Link serves HTTP/WebSocket before Bluetooth discovery finishes (link #10) and pins the esp32
+  core to 3.3.11 (link #11).
+
 ## 0.5.0 — 2026-10-30
 
 Built from desktop `master` against editor `main` and link `master`; everything below is merged.
