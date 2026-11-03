@@ -8,6 +8,8 @@ use tauri::{Manager, WindowEvent};
 use tauri_plugin_shell::process::{CommandChild, CommandEvent};
 use tauri_plugin_shell::ShellExt;
 
+mod project_file;
+
 /// WS port the bundled `thingblock-link` sidecar listens on. Contract with the
 /// editor, which connects to `ws://localhost:<this>` — keep both sides in lockstep.
 const LINK_WS_PORT: u16 = 3030;
@@ -31,7 +33,16 @@ struct LinkSidecarState {
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_shell::init())
+        .plugin(tauri_plugin_dialog::init())
         .manage(LinkSidecarState::default())
+        .manage(project_file::ProjectFileState::default())
+        .invoke_handler(tauri::generate_handler![
+            project_file::pick_save_path,
+            project_file::pick_open_path,
+            project_file::write_project_file,
+            project_file::read_project_file,
+            project_file::set_window_title
+        ])
         .setup(|app| {
             if cfg!(debug_assertions) {
                 app.handle().plugin(

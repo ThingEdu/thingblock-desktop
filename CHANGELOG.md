@@ -16,8 +16,8 @@ yet. Installer: `aarch64-apple-darwin` (dmg), unsigned.
 
 ### Boards
 
-- **Board list trimmed to ThingBot, ESP32-C3 and Via Bánh Mì** — editor **#53**. Arduino Uno,
-  Arduino Nano and ESP32 are hidden from the picker; they stay registered, so projects saved on them
+- **Board list trimmed to ThingBot and VIA Banh Mi** — editor **#53**. Arduino Uno, Arduino Nano,
+  ESP32 and ESP32-C3 are hidden from the picker; they stay registered, so projects saved on them
   still open and build.
 - **One motor direction everywhere** — editor **#42**. Forward is channel A = 0, B = PWM in upload,
   Live and phone control; M3_B moves from PCA9685 channel 8 (the S5 servo) to 6. The Telemetrix
@@ -32,6 +32,15 @@ yet. Installer: `aarch64-apple-darwin` (dmg), unsigned.
   **#53**. 14 lessons: the 4 originals plus the 10 thingbot-sim lessons (editor **#54**, merged into
   #53). The checker grades SW presses, the distance slider, the virtual PS2 pad and servo sweeps.
 - Virtual ultrasonic sensor and PS2 gamepad; lessons can declare the modules they need.
+
+### Saving projects
+
+- **Save to a file you choose** — editor **#53**, desktop **#6**. File → "Lưu" (⌘S / Ctrl+S) opens
+  the native Save dialog the first time, then writes back to the same file; "Lưu thành…"
+  (Shift+⌘S) always asks. Opening a project uses the native Open dialog, so ⌘S overwrites it. Each
+  save shows "Đã lưu: <path>" and the window title shows the file name. Before, saving was a browser
+  download into Downloads without choosing a folder. The shell gains `tauri-plugin-dialog` and
+  commands that only read or write paths picked in those dialogs.
 
 ### Examples
 
