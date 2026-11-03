@@ -4,6 +4,13 @@
 # Tauri can bundle them. macOS + Linux path; Windows uses stage-sidecar.ps1.
 set -euo pipefail
 
+# rustup installs cargo/rustc into ~/.cargo/bin, which non-login shells (IDEs, npm scripts started
+# from a GUI) often lack on PATH.
+if ! command -v cargo >/dev/null 2>&1 && [ -x "$HOME/.cargo/bin/cargo" ]; then
+    export PATH="$HOME/.cargo/bin:$PATH"
+fi
+command -v cargo >/dev/null 2>&1 || { echo "cargo not found: install Rust from https://rustup.rs" >&2; exit 1; }
+
 DESKTOP_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 LINK_DIR="$(cd "$DESKTOP_DIR/../thingblock-link" && pwd)"
 EDITOR_DIR="$(cd "$DESKTOP_DIR/../thingblock-editor" && pwd)"
