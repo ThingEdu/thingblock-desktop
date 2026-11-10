@@ -1,6 +1,6 @@
 {
   "name": "thingblock-desktop",
-  "version": "0.6.0-preview-20261104",
+  "version": "0.8.0-preview-20261110",
   "private": true,
   "scripts": {
     "build:editor": "cross-env NODE_ENV=production npm --prefix ../thingblock-editor/packages/thingblock-gui run build:dev",
