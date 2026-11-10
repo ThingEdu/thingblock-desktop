@@ -7,6 +7,38 @@ this file is the one place that says what changed across all of them.
 Entries name the PR that carries the change and whether it is merged or still open, because a
 preview installer can contain work that no `main`/`master` has yet.
 
+## 0.8.0-preview-20261110 — 2026-11-10
+
+Preview. Built from this branch, which sits on 0.7 (desktop **#8**, **#7**), against editor `develop`
+with editor **#62**, **#60**, **#61** and **#63** merged in that order, and link `master`. None of the
+editor PRs is merged yet.
+
+### Thing Smart (new)
+
+- **Thing Smart extension**, editor **#63 (open)**. Blocks for the real devices of a home kept in
+  ThingEdges Desktop on the same computer: lights, switches (one menu item per channel), outlets, air
+  conditioners, TVs and IR remotes, and sensors. Includes edge-triggered hats ("when turned on",
+  "when temperature > n") and a status reporter that tells the child what to do next. The blocks run
+  in the editor (host mode), not on a board. You find the extension in the extension library while
+  no board is selected.
+- **Pairing is tied to a personal ThingEdges account.** ThingEdges Desktop must be signed in and must
+  have a location open. An adult allows ThingBlock once in the Desktop dialog, which names the account.
+  The token works only while that account is signed in. The bridge lives in ThingEdges Desktop
+  (`RogoSolutions/ThingEdges-Desktop`, branch `feat/thingblock-local-bridge`). Design note: editor
+  `docs/specs/2026-11-10-thing-smart-design.md`.
+- **Not tested yet:**
+  - controlling a real device;
+  - the packaged Tauri webview calling the loopback bridge;
+  - Windows and Linux.
+
+### Carried from 0.7.0-preview
+
+- **Camera AI**, editor **#60 (open)**: hand blocks, the playground panel, physics and four demo games.
+  macOS camera permission comes from desktop **#7 (open)**.
+- **Lessons and examples for beginners**, editor **#61 (open)**: 14 lessons and 36 examples rewritten,
+  plus a glossary lesson.
+- **New link contract**, editor **#62 (open)**: brings `main` (#59) into `develop`.
+
 ## 0.5.0 — 2026-10-30
 
 Built from desktop `master` against editor `main` and link `master`; everything below is merged.
