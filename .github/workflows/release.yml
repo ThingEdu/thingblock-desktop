@@ -6,7 +6,16 @@ on:
   push:
     tags:
       - "v*"
-  workflow_dispatch: {}
+  workflow_dispatch:
+    inputs:
+      editor_ref:
+        description: "thingblock-editor branch/tag/commit to build (empty = the tag rule below)"
+        required: false
+        default: ""
+      link_ref:
+        description: "thingblock-link branch/tag/commit to build (empty = the tag rule below)"
+        required: false
+        default: ""
 
 jobs:
   build:
@@ -38,14 +47,15 @@ jobs:
           repository: ThingEdu/thingblock-editor
           # A `vX.Y.Z-preview-<date>` tag builds the preview channel from `develop`; any other
           # tag builds the official release from `main`.
-          ref: ${{ contains(github.ref_name, '-preview-') && 'develop' || 'main' }}
+          # A manual run can pin any editor ref (e.g. a release branch not merged yet).
+          ref: ${{ inputs.editor_ref || (contains(github.ref_name, '-preview-') && 'develop' || 'main') }}
           path: thingblock-editor
 
       - name: Checkout thingblock-link
         uses: actions/checkout@v4
         with:
           repository: ThingEdu/thingblock-link
-          ref: ${{ contains(github.ref_name, '-preview-') && 'develop' || 'master' }}
+          ref: ${{ inputs.link_ref || (contains(github.ref_name, '-preview-') && 'develop' || 'master') }}
           path: thingblock-link
 
       - name: Setup Node

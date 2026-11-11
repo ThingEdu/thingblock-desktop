@@ -7,6 +7,22 @@ this file is the one place that says what changed across all of them.
 Entries name the PR that carries the change and whether it is merged or still open, because a
 preview installer can contain work that no `main`/`master` has yet.
 
+## 0.8.0-preview-20261112
+
+Preview built by a manual run of `release.yml` against editor branch `release/0.8.0-preview` (the
+open 0.7 stack #60, #61, #65, #66, #67 plus a pass over lessons, examples, block labels and the
+generated Arduino comments for children) and link `master` (#14 merged). **Thing Smart (ThingEdges,
+editor #63/#68) is not in this build** — it is held for a later release. Unsigned — Gatekeeper and
+SmartScreen will warn.
+
+- Everything listed for 0.7.0-preview-20261110 (Camera AI, mouse play, exercise games, CoBot board,
+  I2C colour sensor, ThingBot Sim lessons 6 and 10, beginner glossary, macOS camera permission).
+- Lessons: 16 of 19 rewritten for children; fixes three factual errors (OLED print wraps by
+  default, the ThingBot start block is optional, the I2C port is 5V).
+- Examples: all 52 notes rewritten, Vietnamese variable names, comments on magic numbers.
+- CoBot and colour sensor: plainer block labels, Vietnamese comments in the generated Arduino code.
+- `release.yml`: manual runs take `editor_ref` / `link_ref` inputs.
+
 ## 0.5.0 — 2026-10-30
 
 Built from desktop `master` against editor `main` and link `master`; everything below is merged.

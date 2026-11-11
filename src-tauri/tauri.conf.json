@@ -1,7 +1,7 @@
 {
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
   "productName": "ThingBlock",
-  "version": "0.7.0-preview-20261110",
+  "version": "0.8.0-preview-20261112",
   "identifier": "com.thingblock.desktop",
   "build": {
     "frontendDist": "../frontend",
