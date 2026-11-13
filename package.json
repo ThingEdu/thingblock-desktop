@@ -2,6 +2,7 @@
   "name": "thingblock-desktop",
   "version": "0.8.0-preview-20261112",
   "private": true,
+  "license": "AGPL-3.0-only",
   "scripts": {
     "build:editor": "cross-env NODE_ENV=production npm --prefix ../thingblock-editor/packages/thingblock-gui run build:dev",
     "dev:editor": "npm --prefix ../thingblock-editor/packages/thingblock-gui run start",
