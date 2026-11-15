@@ -1,6 +1,6 @@
 {
   "name": "thingblock-desktop",
-  "version": "0.6.0-preview-20261104",
+  "version": "0.8.0-preview-20261110",
   "private": true,
   "license": "AGPL-3.0-only",
   "scripts": {
