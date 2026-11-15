@@ -7,6 +7,79 @@ this file is the one place that says what changed across all of them.
 Entries name the PR that carries the change and whether it is merged or still open, because a
 preview installer can contain work that no `main`/`master` has yet.
 
+## 0.8.0-preview-20261115
+
+Built from desktop `develop` against editor `develop` and link `develop`. Everything below is
+merged into `develop` only — none of it is on editor `main` or link/desktop `master`, and the
+editor PRs were merged without review. Changes are since 0.6.0-preview-20261104, the last
+published release (0.7.0-preview-20261110 and 0.8.0-preview-20261112 were never published).
+Editor, link and desktop now share one version, `0.8.0-preview-20261115`. **Thing Smart
+(ThingEdges, editor #63/#68) is not in this build.** Installers: `x86_64-pc-windows-msvc` (nsis),
+`aarch64-apple-darwin` (dmg), Linux x64 (deb/rpm). Unsigned — Gatekeeper and SmartScreen will warn.
+
+### Camera AI
+
+- **Camera AI extension** (`cameraAi`) — editor **#60, #67 (merged into develop)**. Webcam hand
+  tracking (MediaPipe hand landmarker) and head/body tracking (MediaPipe pose landmarker lite,
+  loaded only when a project uses head blocks or the flap hat). Blocks for hand position and
+  gestures, head position and lean, touch hats, and a playground panel next to the simulator with
+  objects, physics, scores and a countdown.
+- **Play without a webcam** — "Chuột (không cần webcam)" in the camera list: the pointer is the
+  index fingertip, mouse buttons and keys 1–7 make gestures, arrow keys and space drive the head
+  and flap.
+- 11 examples under File → Examples → Camera AI and 4 graded Camera AI lessons, graded in the
+  editor from VM events rather than the simulator.
+- Fixes: a forever loop moving objects no longer floods the GUI with updates; gesture labels no
+  longer fall back to English after `vm.setLocale`.
+- macOS: the app declares camera use so the blocks get camera access — desktop `f0901c2`.
+- Not yet tuned with children: the flap, nod and lean thresholds.
+
+### Boards and peripherals
+
+- **CoBot** (Maker Việt line-following robot, ESP32-C3) — editor **#66 (merged into develop)**.
+  Drive, turn, line-eye and light blocks, and 5 examples under File → Examples → CoBot. No
+  simulator for CoBot yet. Not checked on a real CoBot: the line threshold direction, the eye
+  order and the colour thresholds.
+- **Colour Sensor (I2C)** — editor **#66**. TCS34725 at 0x29 on any board: red, green, blue,
+  brightness, "sees colour?" and the colour name.
+
+### Simulator and lessons
+
+- **ThingBot Sim lessons 6 and 10 rewritten** — editor **#65 (merged into develop)**. Lesson 6:
+  an IR eye on IO4 picks FanRoc balls by colour. Lesson 10: an egg sorting belt driven by M1,
+  with servo S1 rejecting bad eggs. The sim panel gains a ball picker and the egg belt.
+- **Lessons and example notes rewritten for children**, plus an "Electronics dictionary" lesson —
+  editor #61, merged through **#69**.
+- **Lesson format moved to English** (`lesson.<lang>.md`, English ids, keys and rule grammar) —
+  editor `11d8c1de7`. **Lesson ids changed, so progress saved by earlier previews is lost.**
+
+### Editor layout
+
+- The lesson panel moves to a left panel, and the lesson library is sectioned by group — editor
+  `11d8c1de7`, `27fe413e7`.
+- The side panel splits into a host monitor (no board) and a board monitor (serial, baud rate),
+  each hideable from the panel menu — editor `1fab8fbd7`.
+- The simulator is a headerless card above the code view; Run/Pause, Step, Reset and Mute move
+  into a floating action button — editor `2b44924f4`.
+- Connecting a board shows a connecting state and inline errors — editor `81b4f5f06`.
+- Vietnamese for the board menu, the code tab, connecting messages and board descriptions —
+  editor `d9e426552` (part of #48).
+
+### Link
+
+- **Gateway architecture** — link **#12 (merged)**. HTTP API (`/api/platforms`, `/api/boards`)
+  plus WebSockets at `/ws/arduino` and `/ws/ble`; the editor adopts it in `04d83f082`. The editor
+  and link must come from the same release. Only `arduino:avr` and `esp32:esp32` (pinned to
+  3.3.11) are listed and installable.
+- **arduino-cli daemon ends with the link** — link **#14 (merged)**. Closing the app, a force
+  quit or a crash no longer leaves `arduino-cli daemon` processes running.
+
+### Licence and build
+
+- Editor, link and desktop are licensed AGPL-3.0-only — editor #64, link #13, desktop `1b730ba`.
+- `release.yml`: macOS builds on `macos-15` (`c7601a6`); manual runs take `editor_ref` /
+  `link_ref` inputs.
+
 ## 0.8.0-preview-20261112
 
 Preview built by a manual run of `release.yml` against editor branch `release/0.8.0-preview` (the
