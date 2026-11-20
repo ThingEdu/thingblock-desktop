@@ -7,6 +7,50 @@ this file is the one place that says what changed across all of them.
 Entries name the PR that carries the change and whether it is merged or still open, because a
 preview installer can contain work that no `main`/`master` has yet.
 
+## 0.9.0-preview-20261120
+
+Built from desktop `develop` against editor `develop` and link `develop`. Everything below is
+merged into `develop` only — none of it is on editor `main` or link/desktop `master`, and the
+editor changes were merged without review. Changes are since 0.8.0-preview-20261115. Editor, link
+and desktop share one version, `0.9.0-preview-20261120`; link has no changes beyond the version.
+Installers: `x86_64-pc-windows-msvc` (nsis), `aarch64-apple-darwin` (dmg), Linux x64 (deb/rpm).
+Unsigned — Gatekeeper and SmartScreen will warn.
+
+### New editor
+
+- **The app ships the TypeScript editor, `apps/thingblock`, instead of `thingblock-gui`** —
+  desktop `8f5d67c`. It is a port of `thingblock-gui` built with Vite, on the same VM, blocks and
+  resource packs. `thingblock-gui` stays in the editor repo but is no longer shipped.
+- Settings → More settings… opens a settings modal with Preferences (language, theme, colour mode)
+  and About (version, GitHub, licence, Scratch credit) — editor `ac8673324`, `5c56e733b`.
+- Extension cards show what each extension requires: Camera AI a webcam, ThingBot Telemetrix
+  Bluetooth — editor `ef18f0a8f`.
+- Connecting ThingBot moves from the menu bar into the ThingBot Telemetrix pane in the side panel —
+  editor `383671a48`.
+- The Camera AI pane's controls move into a floating action button beside the stage, and the app
+  serves the Camera AI models itself — editor `2c71754b2`, `591fa5ff1`.
+- The menu bar logo is drawn as paths, so the Fredoka One web font is gone — editor `b96c14b4c`.
+
+### Removed
+
+- **The simulator and lessons** — the `thingblock-sim` package, the sim panel, the lesson library
+  and lesson panel, and the sim models in the resource pack — editor `0d5deea2f`.
+- **Example projects** — File → Examples and the examples in the resource pack — editor
+  `5170f33aa`, `6ef03b477`, `370b03416`.
+- **Playing Camera AI with the mouse** — editor `dc7d9a6cb`. Camera AI needs a webcam.
+
+### Build and dependencies
+
+- `release.yml` and `stage-frontend` build `apps/thingblock` and stage `apps/thingblock/dist`;
+  `cross-env` and the webpack memory limit are dropped — desktop `8f5d67c`.
+- Vulnerable dependencies patched (vitest 4.1.12, immutable 3.8.4, `npm audit fix`) — editor
+  `0bebdb581`; scratch-l10n 6.1.142 drops Transifex — editor `cb4be5895`.
+
+### Known gaps
+
+- This is the first build of `apps/thingblock` inside the desktop shell. Connecting a board,
+  uploading, flashing firmware and native Save/Open have not been tried with it yet.
+
 ## 0.8.0-preview-20261115
 
 Built from desktop `develop` against editor `develop` and link `develop`. Everything below is
