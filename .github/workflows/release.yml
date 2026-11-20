@@ -36,13 +36,13 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout thingblock-desktop
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           repository: ThingEdu/thingblock-desktop
           path: thingblock-desktop
 
       - name: Checkout thingblock-editor
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           repository: ThingEdu/thingblock-editor
           # A `vX.Y.Z-preview-<date>` tag builds the preview channel from `develop`; any other
@@ -52,14 +52,14 @@ jobs:
           path: thingblock-editor
 
       - name: Checkout thingblock-link
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           repository: ThingEdu/thingblock-link
           ref: ${{ inputs.link_ref || (contains(github.ref_name, '-preview-') && 'develop' || 'master') }}
           path: thingblock-link
 
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: 24
           cache: npm
@@ -123,7 +123,7 @@ jobs:
 
       - name: Upload installers (dispatch test runs)
         if: github.event_name == 'workflow_dispatch'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: thingblock-${{ matrix.target }}
           path: |
