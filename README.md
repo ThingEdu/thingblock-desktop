@@ -21,8 +21,11 @@ installable app.
 
 ```sh
 npm install
-npm --prefix ../thingblock-editor/packages/thingblock-gui install
+npm --prefix ../thingblock-editor ci
+npm --prefix ../thingblock-editor run build:libs
 ```
+
+The editor app uses the built editor libraries, so rerun `build:libs` after changing any of them.
 
 ## Run in dev
 

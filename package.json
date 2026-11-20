@@ -4,8 +4,8 @@
   "private": true,
   "license": "AGPL-3.0-only",
   "scripts": {
-    "build:editor": "cross-env NODE_ENV=production npm --prefix ../thingblock-editor/packages/thingblock-gui run build:dev",
-    "dev:editor": "npm --prefix ../thingblock-editor/packages/thingblock-gui run start",
+    "build:editor": "npm --prefix ../thingblock-editor/apps/thingblock run build",
+    "dev:editor": "npm --prefix ../thingblock-editor/apps/thingblock run dev -- --port 8601 --strictPort",
     "dist": "tauri build",
     "dist:debug": "tauri build --debug",
     "stage:frontend": "bash scripts/stage-frontend.sh",
@@ -15,7 +15,6 @@
     "tauri": "tauri"
   },
   "devDependencies": {
-    "@tauri-apps/cli": "^2",
-    "cross-env": "^7"
+    "@tauri-apps/cli": "^2"
   }
 }

@@ -30,9 +30,9 @@ The three are independent git repos checked out as siblings on disk:
 
 `thingblock-desktop` reaches out to the siblings rather than embedding them:
 
-- The **editor** is consumed as a built frontend: dev points at its webpack dev server
+- The **editor** is consumed as a built frontend: dev points at its Vite dev server
   (`http://localhost:8601`), release points at `frontend/` — a staged copy of its production build
-  (`thingblock-editor/packages/thingblock-gui/build`) that this repo owns (see "The frontend
+  (`thingblock-editor/apps/thingblock/dist`) that this repo owns (see "The frontend
   contract"). `frontendDist` points at the staged copy, never at the editor's build directly.
 - The **link** is consumed as a **prebuilt sidecar binary**: `cargo build --release` in the link
   repo, then its binary is staged into `src-tauri/binaries/` (bundled via Tauri `externalBin`).

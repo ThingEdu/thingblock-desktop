@@ -14,7 +14,7 @@ $DesktopDir = (Resolve-Path "$PSScriptRoot\..").Path
 $EditorDir  = (Resolve-Path "$DesktopDir\..\thingblock-editor").Path
 
 $FrontendDir  = Join-Path $DesktopDir "frontend"
-$EditorBuild  = Join-Path $EditorDir "packages\thingblock-gui\build"
+$EditorBuild  = Join-Path $EditorDir "apps\thingblock\dist"
 $ResourcePack = Join-Path $EditorDir "packages\thingblock-resource\dist\thingblock-resource"
 
 if (-not (Test-Path $EditorBuild)) {
