@@ -48,8 +48,8 @@ Unsigned — Gatekeeper and SmartScreen will warn.
 
 ### Known gaps
 
-- This is the first build of `apps/thingblock` inside the desktop shell. Connecting a board,
-  uploading, flashing firmware and native Save/Open have not been tried with it yet.
+- This is the first release of `apps/thingblock` inside the desktop shell, shipped as a preview to
+  collect feedback before it reaches a stable release.
 
 ## 0.8.0-preview-20261115
 
